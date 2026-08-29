@@ -79,4 +79,53 @@ McNemar's paired test confirms the advantage against every competitor at p < 0.0
 | 3–5 | 52.2% | 21.7% |
 | 5+ | 53.3% | 24.0% |
 
-The rank-biserial correlation for
+The rank-biserial correlation for claims history reverses sign, from r = +0.027 to r = −0.096. Both readings are statistically significant and theoretically defensible; only one is correct. Model *ranking* survived the correction — the *explanation* did not.
+
+**Segmentation.** K-Means on claims history, tenure and premium (k = 3, silhouette 0.4173) identifies the at-risk group as short-tenure, high-premium policyholders (24.8% churn), not heavy claimants — the heaviest-claiming segment averages 16.5 years of tenure and churns least, at 18.7%.
+
+**Threshold calibration.** At the default 0.50 threshold the model finds only 38.7% of lapsing policies. Sensitivity analysis over plausible cost ratios puts the cost-optimal threshold far lower — around 0.16 when a lost policy is worth five times a retention contact, lifting recall to 0.85.
+
+---
+
+## Contribution
+
+The class-imbalance literature treats the imbalance ratio as a fixed property of the data to be corrected, either by synthetic oversampling or by cost-sensitive weighting. This project shows it can instead be an **artefact of missingness handling**: listwise deletion of a field that is structurally absent for the majority class converted a 79.6 : 20.4 portfolio into a 54.4 : 45.6 sample and reversed the central relationship.
+
+The caution generalises to any field present only when the outcome occurs — a cancellation reason, a claim settlement date, a churn survey response. Missingness should be classified as structural or non-structural *before* any deletion rule is applied.
+
+---
+
+## Limitations
+
+- The design is cross-sectional. The claims → premium → switching mechanism is an inference to the best explanation, not a demonstrated causal chain; the dataset holds a single premium value per policy rather than a premium history.
+- The observation window censors policies renewing after November 2018, which churn at 15.4% against 23.3% for those renewing inside it, simply because there was less opportunity to observe a lapse. Survival analysis with right-censoring is the natural extension.
+- The portfolio is geographically concentrated, which limits generalisability to other markets.
+
+---
+
+## Repository contents
+
+| File | Description |
+|---|---|
+| `motor_insurance_churn_.ipynb` | Complete analysis notebook — Part I (sections 1–6) and Part II (sections 7–18) |
+| `Motor vehicle insurance data.xlsx` | Source dataset: 105,555 policy records, 30 variables (ICPSR) |
+| `BUSI1783_ResearchProposal.pdf` | Research proposal |
+| `prototype.docx` | Early prototype write-up |
+| `README.md` | This file |
+
+## Running the notebook
+
+```bash
+pip install pandas numpy matplotlib seaborn scikit-learn scipy plotly openpyxl
+jupyter notebook motor_insurance_churn_.ipynb
+```
+
+The notebook expects `Motor vehicle insurance data.xlsx` in the same directory. Run cells in order; Part II reloads the raw file independently of Part I, so the two analyses do not contaminate each other.
+
+**Tools:** Python · pandas · NumPy · Matplotlib · Seaborn · scikit-learn · SciPy · Jupyter Notebook
+
+---
+
+## Author
+
+**Yashi Hiren Desai** — MSc Business Analytics, University of Greenwich
